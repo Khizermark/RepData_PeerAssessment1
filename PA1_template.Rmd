@@ -1,20 +1,65 @@
-# Reproducible Research: Peer Assessment 1
+Activity Monitoring Devices
+========================================================
+
+
 
 
 ## Loading and preprocessing the data
+The entire dataset of steps data is loaded into the variable called steps_data in the following:
+
+```{r}
+steps_data <- read.csv("./repdata-data-activity/activity.csv")
+```
 
 
 
-## What is mean total number of steps taken per day?
+## Mean total number of steps taken per day
+
+Following code computes "PerDay" calculations for each date given in the dataset. Daywise sums, means and medians for steps are calculated and stored in the variable "datewise". Then, histogram of daywise sums of steps is plotted with ggplot2 library.
 
 
+```{r,echo=TRUE,warning=FALSE,message=FALSE}
+StepSumsPerDay = tapply(steps_data$steps,steps_data$date,sum,na.rm = TRUE)       ## Calculating Daily Sums
+StepMeansPerDay = tapply(steps_data$steps,steps_data$date,mean,na.rm = TRUE)     ## Calculating Daily Means
+StepMediansPerDay = tapply(steps_data$steps,steps_data$date,median,na.rm = TRUE) ## Calculating Daily Medians
 
-## What is the average daily activity pattern?
+datewise = data.frame(cbind(StepSumsPerDay,StepMeansPerDay,StepMediansPerDay))   ## Merging above three in a single dataframe
+colnames(datewise) = c("Sums","Means","Medians")
+library(ggplot2)
+qplot(Sums,data = datewise, geom = "histogram",fill = "red",xlab = "Daily Total Steps", ylab= "Frequency of occurances ",main = "Histogram of Total Daily Steps")
+overall_mean_of_sums = mean(datewise$Sums,na.rm = T)
+overall_median_of_sums = median(datewise$Sums,na.rm = T)
+```
+
+The overall mean of the total number of steps taken per day is `r overall_mean_of_sums`.  
+Similarly median is `r overall_median_of_sums` 
 
 
+## Average daily activity pattern
+
+```{r,warning=FALSE,message=FALSE}
+steps_data$interval = as.factor(steps_data$interval)
+StepMeansPerInterval = data.frame(tapply(steps_data$steps,steps_data$interval,mean,na.rm = TRUE))
+colnames(StepMeansPerInterval) = "IntervalMeans"
+StepMeansPerInterval$x = 1:288
+ggplot(StepMeansPerInterval,aes(x = x,y = IntervalMeans)) + geom_line() + xlab("Interval") + ylab("Average Steps in the Interval") + ggtitle("Average no. of Steps in all Intervals")
+
+max_interval = names(which.max(StepMeansPerInterval$IntervalMeans))
+
+```
+The above plot shows the average number of steps in an interval across all days.  
+Following plot will show average number of steps daily across all intervals.
+```{r,warning=FALSE,message=FALSE}
+datewise$Days = 1:61
+ggplot(datewise,aes(x = Days,y = Means)) + geom_line() + xlab("Days") + ylab("Average Steps daily") + ggtitle("Average no. of Steps Daily for Two Months")
+```
+
+
+The Interval which has the maximum average value of number of steps is `r names(which.max(StepMeansPerInterval$IntervalMeans))`
 
 ## Imputing missing values
 
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
