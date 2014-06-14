@@ -1,17 +1,12 @@
 Activity Monitoring Devices
 ========================================================
 
-
-
-
 ## Loading and preprocessing the data
 The entire dataset of steps data is loaded into the variable called steps_data in the following:
 
 ```{r}
 steps_data <- read.csv("./repdata-data-activity/activity.csv")
 ```
-
-
 
 ## Mean total number of steps taken per day
 
