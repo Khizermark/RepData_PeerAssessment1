@@ -84,3 +84,31 @@ The values of mean and median after imputation are `r new_mean` and `r new_media
 They are different than the previous value and are slightly higher.
 ## Are there differences in activity patterns between weekdays and weekends?
 
+In the following code, creating new factor variables - "Weekday" and "weekend." Then, plotting the required graph after doing some computations. 
+
+
+```{r,warning=FALSE,message=FALSE}
+new_data$weekday = weekdays(as.Date(strptime(new_data$date, "%Y-%m-%d")))
+new_data$f = ifelse(new_data$weekday == "Sunday" | new_data$weekday == "Saturday","weekend","weekday")
+new_data$f = factor(new_data$f,labels = c("weekend","weekday"))
+library(lattice)
+new_data$interval = as.factor(new_data$interval)
+weekend = subset(new_data, f == "weekend")
+weekend = data.frame(tapply(weekend$steps, weekend$interval, mean, na.rm = T))
+weekday = subset(new_data, f == "weekday")
+weekday = data.frame(tapply(weekday$steps, weekday$interval, mean, na.rm = T))
+weekend$x = rownames(weekend)
+weekday$x = rownames(weekday)
+weekend$f = "weekend"
+weekday$f = "weekday"
+rownames(weekend) = 1:288
+colnames(weekend) = c("Means","x","f")
+rownames(weekday) = 1:288
+colnames(weekday) = c("Means","x","f")
+week = rbind(weekend,weekday)
+week$f = factor(week$f,labels = c("weekday","weekend"))
+week$Means = as.numeric(week$Means)
+week$x = as.numeric(week$x)
+xyplot(Means ~ x|f, layout = c(1,2), data= week,type = "l" ,xlab = "Interval", ylab = "Average No. of Steps")
+```
+
