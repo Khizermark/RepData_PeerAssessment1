@@ -59,7 +59,28 @@ The Interval which has the maximum average value of number of steps is `r names(
 
 ## Imputing missing values
 
+Replacing missing values in the variable "new_data"" with the average of the whole dataset.
+```{r}
+missing = is.na(steps_data$steps)
+steps_data$interval = as.numeric(as.character(steps_data$interval))
+# Replacing missing values with the average of whole dataset.
+new_data = steps_data
+new_data$steps[missing] <- mean(new_data$steps,na.rm = T)
 
+```
+The total number of missing values before imputing in the dataset are `r table(missing)[2]`   
 
+In the following code, calculating the number of steps taken each day.
+
+```{r,warning=FALSE,message=FALSE}
+newSumsPerDay = data.frame(tapply(new_data$steps,new_data$date,sum,na.rm = TRUE))
+colnames(newSumsPerDay) = "new_Sums"
+qplot(new_Sums,data = newSumsPerDay, geom = "histogram",fill = "red",xlab = "Daily Total Steps", ylab= "Frequency of occurances after imputation ",main = "Histogram of Total Daily Steps After Imputation")
+new_mean = mean(newSumsPerDay$new_Sums, na.rm = T)
+new_median =  median(newSumsPerDay$new_Sums, na.rm = T)
+```
+
+The values of mean and median after imputation are `r new_mean` and `r new_median` respectively.  
+They are different than the previous value and are slightly higher.
 ## Are there differences in activity patterns between weekdays and weekends?
 
