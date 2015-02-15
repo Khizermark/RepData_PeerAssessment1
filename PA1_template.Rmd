@@ -7,8 +7,9 @@ Activity Monitoring Devices
 ## Loading and preprocessing the data
 The entire dataset of steps data is loaded into the variable called steps_data in the following:
 
-```{r}
+```{r,echo=TRUE}
 steps_data <- read.csv("./repdata-data-activity/activity.csv")
+#steps_data$date <- strptime(steps_data$date, "%Y-%m-%d")
 ```
 
 
